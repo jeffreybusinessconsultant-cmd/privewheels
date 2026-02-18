@@ -7,6 +7,7 @@
     "dev": "set NODE_ENV=development && tsx server/index.ts",
     "dev:frontend": "vite",
     "build": "tsx script/build.ts",
+    "build:frontend": "vite build",
     "start": "set NODE_ENV=production && node dist/index.cjs",
     "check": "tsc",
     "db:push": "drizzle-kit push"
