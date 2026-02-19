@@ -1,5 +1,13 @@
 import type { Car, Booking, User } from "@shared/schema";
 
+// Import car images
+import TataNexonEV from "@/assets/images/TataNexonEV.jpeg";
+import MahindraThar from "@/assets/images/MahindraThar.jpeg";
+import HyundaiCreta from "@/assets/images/HyundaiCreta.jpeg";
+import MarutiSuzukiGrandVitara from "@/assets/images/MarutiSuzukiGrandVitara.jpeg";
+import KiaSeltos from "@/assets/images/KiaSeltos.jpeg";
+import MGHector from "@/assets/images/MGHector.jpeg";
+
 export const mockCars: Car[] = [
   {
     id: 1,
@@ -7,7 +15,7 @@ export const mockCars: Car[] = [
     model: "Nexon EV",
     year: 2023,
     color: "Blue",
-    imageUrl: "https://images.unsplash.com/photo-1617788138017-80ad40651399?w=800",
+    imageUrl: TataNexonEV,
     price: 1800000,
     shares: 12,
     sharePrice: 150000,
@@ -30,7 +38,7 @@ export const mockCars: Car[] = [
     model: "Thar",
     year: 2024,
     color: "Red",
-    imageUrl: "https://images.unsplash.com/photo-1519641471654-76ce0107ad1b?w=800",
+    imageUrl: MahindraThar,
     price: 1500000,
     shares: 12,
     sharePrice: 125000,
@@ -53,7 +61,7 @@ export const mockCars: Car[] = [
     model: "Creta",
     year: 2023,
     color: "White",
-    imageUrl: "https://images.unsplash.com/photo-1549317661-bd32c8ce0db2?w=800",
+    imageUrl: HyundaiCreta,
     price: 1400000,
     shares: 12,
     sharePrice: 116667,
@@ -76,7 +84,7 @@ export const mockCars: Car[] = [
     model: "Grand Vitara",
     year: 2024,
     color: "Silver",
-    imageUrl: "https://images.unsplash.com/photo-1552519507-da3b142c6e3d?w=800",
+    imageUrl: MarutiSuzukiGrandVitara,
     price: 1700000,
     shares: 12,
     sharePrice: 141667,
@@ -99,7 +107,7 @@ export const mockCars: Car[] = [
     model: "Seltos",
     year: 2023,
     color: "Black",
-    imageUrl: "https://images.unsplash.com/photo-1583121274602-3e2820c69888?w=800",
+    imageUrl: KiaSeltos,
     price: 1600000,
     shares: 12,
     sharePrice: 133333,
@@ -122,7 +130,7 @@ export const mockCars: Car[] = [
     model: "Hector",
     year: 2024,
     color: "Grey",
-    imageUrl: "https://images.unsplash.com/photo-1605559424843-9e4c228bf1c2?w=800",
+    imageUrl: MGHector,
     price: 1900000,
     shares: 12,
     sharePrice: 158333,
