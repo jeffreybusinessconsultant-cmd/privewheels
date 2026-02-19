@@ -58,14 +58,6 @@ export function Navbar() {
                 }`}>
                   {link.label}
                 </span>
-                {location === link.href && (
-                  <motion.div
-                    layoutId="navbar-underline"
-                    className="absolute bottom-0 left-0 right-0 h-0.5 bg-primary"
-                    initial={false}
-                    transition={{ type: "spring", stiffness: 300, damping: 30 }}
-                  />
-                )}
               </div>
             </Link>
           ))}
