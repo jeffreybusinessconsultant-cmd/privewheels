@@ -1,7 +1,10 @@
 import { Link } from "wouter";
 import { Car, Mail, Phone, MapPin, Facebook, Twitter, Instagram, Linkedin } from "lucide-react";
+import { useAuth } from "@/lib/authContext";
 
 export function Footer() {
+  const { isAuthenticated } = useAuth();
+  
   return (
     <footer className="bg-zinc-950 border-t border-white/10">
       <div className="container mx-auto px-4 py-12">
@@ -11,7 +14,7 @@ export function Footer() {
             <Link href="/">
               <div className="flex items-center gap-2 mb-4 cursor-pointer">
                 <Car className="h-6 w-6 text-primary" />
-                <span className="text-xl font-display font-bold">Shared Wheels</span>
+                <span className="text-xl font-display font-bold">Prive Wheels</span>
               </div>
             </Link>
             <p className="text-muted-foreground text-sm mb-4">
@@ -62,11 +65,13 @@ export function Footer() {
                   <a className="text-muted-foreground hover:text-primary transition-colors text-sm">Contact</a>
                 </Link>
               </li>
-              <li>
-                <Link href="/dashboard">
-                  <a className="text-muted-foreground hover:text-primary transition-colors text-sm">Dashboard</a>
-                </Link>
-              </li>
+              {isAuthenticated && (
+                <li>
+                  <Link href="/dashboard">
+                    <a className="text-muted-foreground hover:text-primary transition-colors text-sm">Dashboard</a>
+                  </Link>
+                </li>
+              )}
             </ul>
           </div>
 
@@ -88,15 +93,15 @@ export function Footer() {
             <ul className="space-y-3">
               <li className="flex items-start gap-2 text-muted-foreground text-sm">
                 <MapPin className="w-4 h-4 mt-0.5 flex-shrink-0 text-primary" />
-                <span>Mumbai, Maharashtra, India</span>
+                <span>Mantri Residency, Bannerghatta Road, Bangalore 560076</span>
               </li>
               <li className="flex items-center gap-2 text-muted-foreground text-sm">
                 <Phone className="w-4 h-4 flex-shrink-0 text-primary" />
-                <span>+91 98765 43210</span>
+                <span>+91 9606996321</span>
               </li>
               <li className="flex items-center gap-2 text-muted-foreground text-sm">
                 <Mail className="w-4 h-4 flex-shrink-0 text-primary" />
-                <span>info@sharedwheels.in</span>
+                <span>response@dieselry.com</span>
               </li>
             </ul>
           </div>
@@ -106,18 +111,24 @@ export function Footer() {
         <div className="pt-8 border-t border-white/10">
           <div className="flex flex-col md:flex-row justify-between items-center gap-4">
             <p className="text-muted-foreground text-sm">
-              © {new Date().getFullYear()} Shared Wheels. All rights reserved.
+              © {new Date().getFullYear()} Prive Wheels. All rights reserved.
             </p>
             <div className="flex gap-6">
-              <a href="#" className="text-muted-foreground hover:text-primary transition-colors text-sm">
-                Privacy Policy
-              </a>
-              <a href="#" className="text-muted-foreground hover:text-primary transition-colors text-sm">
-                Terms of Service
-              </a>
-              <a href="#" className="text-muted-foreground hover:text-primary transition-colors text-sm">
-                Cookie Policy
-              </a>
+              <Link href="/privacy-policy">
+                <a className="text-muted-foreground hover:text-primary transition-colors text-sm">
+                  Privacy Policy
+                </a>
+              </Link>
+              <Link href="/terms-of-service">
+                <a className="text-muted-foreground hover:text-primary transition-colors text-sm">
+                  Terms of Service
+                </a>
+              </Link>
+              <Link href="/cookie-policy">
+                <a className="text-muted-foreground hover:text-primary transition-colors text-sm">
+                  Cookie Policy
+                </a>
+              </Link>
             </div>
           </div>
         </div>

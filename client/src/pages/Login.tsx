@@ -11,11 +11,17 @@ import { Link } from "wouter";
 
 export default function Login() {
   const [, setLocation] = useLocation();
-  const { login } = useAuth();
+  const { login, isAuthenticated } = useAuth();
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState("");
+
+  // Redirect if already logged in
+  if (isAuthenticated) {
+    setLocation("/dashboard");
+    return null;
+  }
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -25,12 +31,16 @@ export default function Login() {
     try {
       const success = await login(username, password);
       if (success) {
-        setLocation("/dashboard");
+        // Small delay to show success state
+        setTimeout(() => {
+          setLocation("/dashboard");
+        }, 300);
       } else {
         setError("Invalid username or password");
       }
     } catch (err) {
       setError("An error occurred. Please try again.");
+      console.error("Login error:", err);
     } finally {
       setIsLoading(false);
     }
@@ -56,7 +66,7 @@ export default function Login() {
             <Link href="/">
               <div className="flex items-center justify-center gap-2 cursor-pointer mb-2">
                 <Car className="h-8 w-8 text-primary" />
-                <span className="text-2xl font-display font-bold">Shared Wheels</span>
+                <span className="text-2xl font-display font-bold">Prive Wheels</span>
               </div>
             </Link>
             <CardTitle className="text-2xl font-display">Member Login</CardTitle>
@@ -76,6 +86,7 @@ export default function Login() {
                   value={username}
                   onChange={(e) => setUsername(e.target.value)}
                   required
+                  autoComplete="username"
                   className="bg-background/50 border-white/10"
                 />
               </div>
@@ -89,6 +100,7 @@ export default function Login() {
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   required
+                  autoComplete="current-password"
                   className="bg-background/50 border-white/10"
                 />
               </div>
@@ -99,8 +111,8 @@ export default function Login() {
                   animate={{ opacity: 1, y: 0 }}
                   className="flex items-center gap-2 p-3 rounded-lg bg-red-500/10 border border-red-500/20 text-red-500 text-sm"
                 >
-                  <AlertCircle className="w-4 h-4" />
-                  {error}
+                  <AlertCircle className="w-4 h-4 flex-shrink-0" />
+                  <span>{error}</span>
                 </motion.div>
               )}
 
@@ -121,10 +133,26 @@ export default function Login() {
             </form>
 
             <div className="mt-6 p-4 rounded-lg bg-primary/5 border border-primary/20">
-              <p className="text-sm text-muted-foreground mb-2">Demo Credentials:</p>
-              <div className="space-y-1 text-sm">
-                <p className="text-white">Username: <span className="text-primary font-mono">demo_user</span></p>
-                <p className="text-white">Password: <span className="text-primary font-mono">demo123</span></p>
+              <p className="text-sm text-muted-foreground mb-3">Demo Credentials:</p>
+              <div className="space-y-2">
+                <div className="flex items-center justify-between">
+                  <div className="space-y-1 text-sm">
+                    <p className="text-white">Username: <span className="text-primary font-mono">demo_user</span></p>
+                    <p className="text-white">Password: <span className="text-primary font-mono">demo123</span></p>
+                  </div>
+                  <Button
+                    type="button"
+                    size="sm"
+                    variant="outline"
+                    onClick={() => {
+                      setUsername("demo_user");
+                      setPassword("demo123");
+                    }}
+                    className="border-primary/30 text-primary hover:bg-primary/10"
+                  >
+                    Auto-fill
+                  </Button>
+                </div>
               </div>
             </div>
 

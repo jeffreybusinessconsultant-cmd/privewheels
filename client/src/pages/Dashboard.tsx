@@ -1,11 +1,21 @@
+import { useState } from "react";
 import { Navbar } from "@/components/Navbar";
 import { Footer } from "@/components/Footer";
-import { useBookings, useDeleteBooking } from "@/hooks/use-bookings";
+import { useBookings, useDeleteBooking, useCreateBooking } from "@/hooks/use-bookings";
+import { useCars } from "@/hooks/use-cars";
 import { useAuth } from "@/lib/authContext";
 import { Loader2, Calendar as CalendarIcon, Car, X, Clock } from "lucide-react";
-import { format, isPast } from "date-fns";
+import { format, isPast, startOfToday } from "date-fns";
 import { Button } from "@/components/ui/button";
+import { Calendar } from "@/components/ui/calendar";
 import { useLocation } from "wouter";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -24,7 +34,12 @@ export default function Dashboard() {
   const { data: bookings, isLoading: loadingBookings } = useBookings({ 
     userId: user?.id ? String(user.id) : undefined 
   });
+  const { data: cars } = useCars();
   const deleteBooking = useDeleteBooking();
+  const createBooking = useCreateBooking();
+  
+  const [selectedCar, setSelectedCar] = useState<string>("");
+  const [selectedDate, setSelectedDate] = useState<Date | undefined>(undefined);
 
   // Redirect to login if not authenticated
   if (!isAuthenticated) {
@@ -43,6 +58,42 @@ export default function Dashboard() {
   // Split bookings into upcoming and past
   const upcomingBookings = bookings?.filter(b => !isPast(new Date(b.endDate))) || [];
   const pastBookings = bookings?.filter(b => isPast(new Date(b.endDate))) || [];
+
+  // Get disabled dates for selected car
+  const getDisabledDates = () => {
+    if (!selectedCar) return [{ before: startOfToday() }];
+    
+    const carBookings = bookings?.filter(b => b.carId === parseInt(selectedCar)) || [];
+    return [
+      { before: startOfToday() },
+      ...carBookings.map((b) => ({
+        from: new Date(b.startDate),
+        to: new Date(b.endDate),
+      })),
+    ];
+  };
+
+  const handleBooking = () => {
+    if (!selectedDate || !selectedCar || !user) return;
+
+    const startDate = new Date(selectedDate);
+    startDate.setHours(9, 0, 0, 0);
+    
+    const endDate = new Date(selectedDate);
+    endDate.setHours(18, 0, 0, 0);
+
+    createBooking.mutate({
+      carId: parseInt(selectedCar),
+      userId: user.id,
+      startDate,
+      endDate,
+      status: "confirmed",
+    });
+
+    // Reset form
+    setSelectedCar("");
+    setSelectedDate(undefined);
+  };
 
   return (
     <div className="min-h-screen bg-background pb-20">
@@ -193,6 +244,70 @@ export default function Dashboard() {
 
           {/* Sidebar Info */}
           <div className="lg:col-span-1 space-y-6">
+            {/* Quick Booking Calendar */}
+            <div className="p-6 rounded-2xl bg-card border border-white/5">
+              <h3 className="font-bold text-white mb-4 flex items-center gap-2">
+                <CalendarIcon className="w-5 h-5 text-primary" />
+                Quick Booking
+              </h3>
+              
+              <div className="space-y-4">
+                <div>
+                  <label className="text-sm text-muted-foreground mb-2 block">Select Car</label>
+                  <Select value={selectedCar} onValueChange={setSelectedCar}>
+                    <SelectTrigger className="bg-background/50 border-white/10">
+                      <SelectValue placeholder="Choose a car" />
+                    </SelectTrigger>
+                    <SelectContent className="bg-card border-white/10">
+                      {cars?.map((car) => (
+                        <SelectItem key={car.id} value={String(car.id)} className="text-white hover:bg-white/5">
+                          {car.make} {car.model}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+
+                {selectedCar && (
+                  <div>
+                    <label className="text-sm text-muted-foreground mb-2 block">Select Date</label>
+                    <Calendar
+                      mode="single"
+                      selected={selectedDate}
+                      onSelect={setSelectedDate}
+                      disabled={getDisabledDates()}
+                      className="rounded-xl border border-white/10 bg-black/20"
+                    />
+                  </div>
+                )}
+
+                {selectedDate && selectedCar && (
+                  <div className="p-3 rounded-lg bg-primary/10 border border-primary/20">
+                    <p className="text-xs text-muted-foreground">Selected</p>
+                    <p className="text-sm font-bold text-primary">
+                      {format(selectedDate, "MMM do, yyyy")}
+                    </p>
+                    <p className="text-xs text-muted-foreground mt-1">9:00 AM - 6:00 PM</p>
+                  </div>
+                )}
+
+                <Button 
+                  onClick={handleBooking}
+                  disabled={!selectedDate || !selectedCar || createBooking.isPending}
+                  className="w-full bg-primary text-primary-foreground hover:bg-primary/90"
+                >
+                  {createBooking.isPending ? (
+                    <>
+                      <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                      Booking...
+                    </>
+                  ) : (
+                    "Confirm Booking"
+                  )}
+                </Button>
+              </div>
+            </div>
+
             <div className="p-6 rounded-2xl bg-gradient-to-br from-primary/20 to-primary/5 border border-primary/20">
               <h3 className="font-bold text-primary mb-2">Member Support</h3>
               <p className="text-sm text-muted-foreground mb-4">

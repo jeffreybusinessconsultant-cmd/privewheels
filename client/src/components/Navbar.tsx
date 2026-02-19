@@ -16,14 +16,19 @@ export function Navbar() {
   const [location, setLocation] = useLocation();
   const { user, logout, isAuthenticated } = useAuth();
 
-  const links = [
+  // Base links that are always visible
+  const baseLinks = [
     { href: "/", label: "Home" },
     { href: "/about", label: "About Us" },
     { href: "/fleet", label: "Browse Cars" },
     { href: "/membership", label: "Membership Plans" },
     { href: "/contact", label: "Contact" },
-    { href: "/dashboard", label: "My Dashboard" },
   ];
+
+  // Add dashboard link only if user is authenticated
+  const links = isAuthenticated 
+    ? [...baseLinks, { href: "/dashboard", label: "My Dashboard" }]
+    : baseLinks;
 
   const handleLogout = () => {
     logout();
@@ -39,7 +44,7 @@ export function Navbar() {
               <Car className="w-6 h-6" />
             </div>
             <span className="text-xl font-display font-bold tracking-tight text-white">
-              SHARED<span className="text-primary">WHEELS</span>
+              PRIVE<span className="text-primary">WHEELS</span>
             </span>
           </div>
         </Link>
